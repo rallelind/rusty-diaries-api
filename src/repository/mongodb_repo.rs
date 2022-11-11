@@ -1,7 +1,7 @@
 
 use mongodb::{
     bson::{extjson::de::Error, oid::ObjectId, doc, DateTime},
-    results::{ InsertOneResult},
+    results::{ InsertOneResult, UpdateResult},
     sync::{Client, Collection},
 };
 use crate::models::diary_model::Diary;
@@ -50,6 +50,27 @@ impl MongoRepo {
             .expect("Error getting the diary details");
         
         Ok(diary_detail.unwrap())
+    }
+
+    pub fn update_diary(&self, id: &String, new_diary: Diary) -> Result<UpdateResult, Error> {
+        let obj_id = ObjectId::parse_str(id).unwrap();
+        let filter = doc! {"_id": obj_id};
+        let new_doc = doc! {
+            "$set":
+                {
+                    "id": new_diary.id,
+                    "date": new_diary.date,
+                    "title": new_diary.title,
+                    "description": new_diary.description,
+                    "updated_at": new_diary.updated_at
+                },
+        };
+        let updated_doc = self
+            .diary_collection
+            .update_one(filter, new_doc, None)
+            .ok()
+            .expect("Error updating user");
+        Ok(updated_doc)
     }
 
 }
