@@ -13,6 +13,7 @@ pub fn create_diary(
         description: new_diary.description.to_owned(),
         date: Some(DateTime::now().to_owned()),
         title: new_diary.title.to_owned(),
+        updated_at: None,
     };
     print!("{:?}", data);
     let user_detail = db.create_diary(data);

@@ -9,4 +9,5 @@ pub struct Diary {
     pub date: Option<DateTime>,
     pub title: String,
     pub description: String,
+    pub updated_at: Option<DateTime>
 }

@@ -28,6 +28,7 @@ impl MongoRepo {
             description: new_diary.description,
             title: new_diary.title,
             date: new_diary.date,
+            updated_at: None,
         };
 
         let diary = self
