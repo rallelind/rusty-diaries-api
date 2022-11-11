@@ -23,3 +23,15 @@ pub fn create_diary(
     }
 }
 
+#[get("/diary/<path>")]
+pub fn get_diary(db: &State<MongoRepo>, path: String) -> Result<Json<Diary>, Status> {
+    let id = path;
+    if id.is_empty() {
+        return Err(Status::BadRequest);
+    }
+    let diary_details = db.get_diary(&id);
+    match diary_details {
+        Ok(diary) => Ok(Json(diary)),
+        Err(_) => Err(Status::InternalServerError),
+    }
+}

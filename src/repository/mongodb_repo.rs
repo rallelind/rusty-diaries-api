@@ -39,4 +39,17 @@ impl MongoRepo {
 
         Ok(diary)
     }
+
+    pub fn get_diary(&self, id: &String) -> Result<Diary, Error> {
+        let obj_id = ObjectId::parse_str(id).unwrap();
+        let filter = doc! {"_id": obj_id};
+        let diary_detail = self
+            .diary_collection
+            .find_one(filter, None)
+            .ok()
+            .expect("Error getting the diary details");
+        
+        Ok(diary_detail.unwrap())
+    }
+
 }
