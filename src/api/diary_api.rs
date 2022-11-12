@@ -14,7 +14,6 @@ pub fn create_diary(
         title: new_diary.title.to_owned(),
         updated_at: None,
     };
-    print!("{:?}", data);
     let user_detail = db.create_diary(data);
     match user_detail {
         Ok(user) => Ok(Json(user)),
