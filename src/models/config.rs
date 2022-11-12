@@ -10,8 +10,6 @@ impl Config {
 
         let mongo_connection_string = env::var("MONGO_DB_CONNECTION_STRING").expect("Could not read mongo connection key");
 
-        println!("{}", mongo_connection_string);
-
         Config { mongo_connection_string }
     }
 }

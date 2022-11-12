@@ -54,10 +54,6 @@ pub fn update_diary(
         updated_at: Some(DateTime::now().to_owned()),
     };
 
-    print!("{:?}", data);
-    print!("{:?}", id);
-
-
     let update_result = db.update_diary(&id, data);
 
     match update_result {
@@ -73,5 +69,25 @@ pub fn update_diary(
             }
         } 
         Err(_) => Err(Status::InternalServerError),
+    }
+}
+
+#[delete("/diary/<path>")]
+pub fn delete_diary(db: &State<MongoRepo>, path: String) -> Result<Json<&str>, Status> {
+    let id = path;
+    if id.is_empty() {
+        return Err(Status::BadRequest);
+    };
+
+    let result = db.delete_diary(&id);
+    match result {
+        Ok(res) => {
+            if res.deleted_count == 1 {
+                return Ok(Json("Diary was successfully deleted"));
+            } else {
+                return Err(Status::NotFound);
+            }
+        }
+        Err(_) => Err(Status::InternalServerError)
     }
 }

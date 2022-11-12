@@ -1,7 +1,7 @@
 
 use mongodb::{
-    bson::{extjson::de::Error, oid::ObjectId, doc, DateTime},
-    results::{ InsertOneResult, UpdateResult},
+    bson::{extjson::de::Error, oid::ObjectId, doc},
+    results::{ InsertOneResult, UpdateResult, DeleteResult},
     sync::{Client, Collection},
 };
 use crate::models::diary_model::Diary;
@@ -69,8 +69,21 @@ impl MongoRepo {
             .diary_collection
             .update_one(filter, new_doc, None)
             .ok()
-            .expect("Error updating user");
+            .expect("Error updating diary");
         Ok(updated_doc)
+    }
+
+    pub fn delete_diary(&self, id: &String) -> Result<DeleteResult, Error> {
+        let obj_id = ObjectId::parse_str(id).unwrap();
+        let filter = doc! {"_id": obj_id};
+
+        let diary_detail = self 
+            .diary_collection
+            .delete_one(filter, None)
+            .ok()
+            .expect("Error deleting the diary");
+        
+        Ok(diary_detail)
     }
 
 }
