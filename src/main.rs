@@ -15,6 +15,3 @@ fn rocket() -> _ {
         .manage(db)
         .mount("/api", routes![create_diary, get_diary, update_diary, delete_diary])
 }
-
-#[cfg(test)]
-mod tests;

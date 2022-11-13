@@ -1,5 +1,5 @@
 [package]
-name = "rusty-diaries-api"
+name = "rusty_diaries_api"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,6 +9,7 @@ edition = "2021"
 rocket = {version = "0.5.0-rc.2", features = ["json"]}
 serde = "1.0.136"
 dotenv = "0.15.0"
+magic-crypt = "3.1.12"
 
 [dependencies.mongodb]
 version = "2.2.0"
