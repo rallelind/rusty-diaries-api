@@ -1,4 +1,4 @@
-use crate::{models::diary_model::Diary, repository::mongodb_repo::MongoRepo, models::encrypt};
+use crate::{models::diary_model::Diary, repository::mongodb_repo::MongoRepo, models::encrypt::Encryption};
 use mongodb::{bson::DateTime, results::InsertOneResult, bson::oid::ObjectId};
 use rocket::{http::Status, serde::json::Json, State};
 
@@ -8,9 +8,12 @@ pub fn create_diary(
     db: &State<MongoRepo>,
     new_diary: Json<Diary>,
 ) -> Result<Json<InsertOneResult>, Status> {
+
+    let encrypted_description = Encryption::encrypt(new_diary.description.to_owned().to_string());
+
     let data = Diary {
         id: None,
-        description: new_diary.description.to_owned(),
+        description: encrypted_description,
         date: Some(DateTime::now().to_owned()),
         title: new_diary.title.to_owned(),
         updated_at: None,
@@ -32,7 +35,9 @@ pub fn get_diary(db: &State<MongoRepo>, path: String) -> Result<Json<Diary>, Sta
 
     match diary_details {
         Ok(mut diary) => {
-            diary.description = "hello world".to_string();
+            let decrypted_description = Encryption::decrypt(diary.description.to_string());
+
+            diary.description = decrypted_description;
             Ok(Json(diary))
         },
         Err(_) => Err(Status::InternalServerError),
@@ -50,14 +55,14 @@ pub fn update_diary(
         return Err(Status::BadRequest);
     };
 
-    //let encrypted_desctiption = encrypt::Encryption::encypt(new_diary.description.to_owned());
+    let encrypted_description = Encryption::encrypt(new_diary.description.to_owned().to_string());
 
-    //println!("{:?}", encrypted_desctiption);
+    println!("{:?}", encrypted_description);
 
     let data = Diary {
         id: Some(ObjectId::parse_str(&id).unwrap().to_owned()),
         title: new_diary.title.to_owned(),
-        description: new_diary.description.to_owned(),
+        description: encrypted_description,
         date: None,
         updated_at: Some(DateTime::now().to_owned()),
     };
