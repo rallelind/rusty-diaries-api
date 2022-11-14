@@ -11,7 +11,7 @@ impl Encryption {
         Encryption { mcrypt }
     }
 
-    pub fn encypt(string: String) -> String {
+    pub fn encrypt(string: String) -> String {
         let mcrypt = Encryption::init();
 
         let encrypted_string = mcrypt.mcrypt.encrypt_str_to_base64(string);
