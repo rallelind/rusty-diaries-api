@@ -10,12 +10,13 @@ pub fn create_diary(
 ) -> Result<Json<InsertOneResult>, Status> {
 
     let encrypted_description = Encryption::encrypt(new_diary.description.to_owned().to_string());
+    let encrypted_title = Encryption::encrypt(new_diary.title.to_owned().to_string());
 
     let data = Diary {
         id: None,
+        title: encrypted_title,
         description: encrypted_description,
         date: Some(DateTime::now().to_owned()),
-        title: new_diary.title.to_owned(),
         updated_at: None,
     };
     let user_detail = db.create_diary(data);
@@ -36,8 +37,10 @@ pub fn get_diary(db: &State<MongoRepo>, path: String) -> Result<Json<Diary>, Sta
     match diary_details {
         Ok(mut diary) => {
             let decrypted_description = Encryption::decrypt(diary.description.to_string());
+            let decrypted_title = Encryption::decrypt(diary.title.to_string());
 
             diary.description = decrypted_description;
+            diary.title = decrypted_title;
             Ok(Json(diary))
         },
         Err(_) => Err(Status::InternalServerError),
