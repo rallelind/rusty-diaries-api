@@ -59,12 +59,11 @@ pub fn update_diary(
     };
 
     let encrypted_description = Encryption::encrypt(new_diary.description.to_owned().to_string());
-
-    println!("{:?}", encrypted_description);
+    let encrypyed_title = Encryption::encrypt(new_diary.title.to_owned().to_string());
 
     let data = Diary {
         id: Some(ObjectId::parse_str(&id).unwrap().to_owned()),
-        title: new_diary.title.to_owned(),
+        title: encrypyed_title,
         description: encrypted_description,
         date: None,
         updated_at: Some(DateTime::now().to_owned()),
