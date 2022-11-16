@@ -3,7 +3,7 @@ use mongodb::{bson::DateTime, results::InsertOneResult, bson::oid::ObjectId};
 use rocket::{http::Status, serde::json::Json, State};
 
 
-#[post("/diary", data = "<new_diary>")]
+#[rocket::post("/diary", data = "<new_diary>")]
 pub fn create_diary(
     db: &State<MongoRepo>,
     new_diary: Json<Diary>,
@@ -26,7 +26,7 @@ pub fn create_diary(
     }
 }
 
-#[get("/diary/<path>")]
+#[rocket::get("/diary/<path>")]
 pub fn get_diary(db: &State<MongoRepo>, path: String) -> Result<Json<Diary>, Status> {
     let id = path;
     if id.is_empty() {
@@ -47,7 +47,7 @@ pub fn get_diary(db: &State<MongoRepo>, path: String) -> Result<Json<Diary>, Sta
     }
 }
 
-#[put("/diary/<path>", data = "<new_diary>")]
+#[rocket::put("/diary/<path>", data = "<new_diary>")]
 pub fn update_diary(
     db: &State<MongoRepo>,
     path: String,
@@ -87,7 +87,7 @@ pub fn update_diary(
     }
 }
 
-#[delete("/diary/<path>")]
+#[rocket::delete("/diary/<path>")]
 pub fn delete_diary(db: &State<MongoRepo>, path: String) -> Result<Json<&str>, Status> {
     let id = path;
     if id.is_empty() {
