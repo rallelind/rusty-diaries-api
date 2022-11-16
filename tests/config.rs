@@ -1,6 +1,6 @@
 use std::env;
 
-use test_modules::models::config::{Config};
+use test_modules::models::config::Config;
 
 #[test]
 fn test_read_mongo_env() {
