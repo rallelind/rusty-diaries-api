@@ -2,7 +2,6 @@ use crate::{models::diary_model::Diary, repository::mongodb_repo::MongoRepo, mod
 use mongodb::{bson::DateTime, results::InsertOneResult, bson::oid::ObjectId};
 use rocket::{http::Status, serde::json::Json, State, get, post, put, delete};
 
-
 #[post("/diary", data = "<new_diary>")]
 pub fn create_diary(
     db: &State<MongoRepo>,
@@ -29,13 +28,21 @@ pub fn create_diary(
 #[get("/diary/<path>")]
 pub fn get_diary(db: &State<MongoRepo>, path: String) -> Result<Json<Diary>, Status> {
     let id = path;
-    if id.is_empty() {
+
+    if id.is_empty() || id.chars().count() != 24 {
         return Err(Status::BadRequest);
     }
     let diary_details = db.get_diary(&id);
 
+    if diary_details.is_err() {
+        return Err(Status::new(404));
+    }
+
+    println!("{:?}", diary_details);
+
     match diary_details {
         Ok(mut diary) => {
+
             let decrypted_description = Encryption::decrypt(diary.description.to_string());
             let decrypted_title = Encryption::decrypt(diary.title.to_string());
 

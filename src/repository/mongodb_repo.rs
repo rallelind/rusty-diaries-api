@@ -41,7 +41,8 @@ impl MongoRepo {
     }
 
     pub fn get_diary(&self, id: &String) -> Result<Diary, Error> {
-        let obj_id = ObjectId::parse_str(id).unwrap();
+        let obj_id = ObjectId::parse_str(id).expect("Wrong id provided");
+
         let filter = doc! {"_id": obj_id};
         let diary_detail = self
             .diary_collection
@@ -49,7 +50,11 @@ impl MongoRepo {
             .ok()
             .expect("Error getting the diary details");
         
-        Ok(diary_detail.unwrap())
+        if !diary_detail.is_none() {
+            Ok(diary_detail.unwrap())
+        } else {
+            Err(Error::DeserializationError { message: ("not found".to_string()) })
+        }
     }
 
     pub fn update_diary(&self, id: &String, new_diary: Diary) -> Result<UpdateResult, Error> {
