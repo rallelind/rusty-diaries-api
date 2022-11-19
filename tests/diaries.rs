@@ -1,9 +1,11 @@
+
 use test_modules::initiate_api::initiate;
 use test_modules::models::diary_model::Diary;
-use mongodb::bson::oid::ObjectId
+
+use test_modules::models::encrypt::Encryption;
 
 use rocket::local::blocking::Client;
-use rocket::http::Status;
+use rocket::http::{Status, ContentType};
 
 fn initiate_rocket_client() -> Client {
 
@@ -27,14 +29,20 @@ fn test_get_diary() {
 #[test]
 fn test_post_diary() {
     
-    let body = Diary {
-        id: Some(ObjectId::new()),
-        title: "test post title".to_string(),
-        description: "test post description".to_string(),
-        date: None,
-        updated_at: None,
-    };
 
     let client = initiate_rocket_client();
 
+    let response = client.post("/api/diary")
+        .header(ContentType::JSON)
+        .body(r##"{
+            "title": "post title",
+            "description": "test post description"
+        }"##)
+        .dispatch();
+
+    assert_eq!(response.status(), Status::Ok);
+
+    let response_body = response.into_json::<Diary>();
+
+    assert_eq!(response_body.unwrap().title, "post title");
 }
