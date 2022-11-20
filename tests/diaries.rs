@@ -1,14 +1,9 @@
 
-use mongodb::bson::DateTime;
-use mongodb::results::InsertOneResult;
-use rocket::local::asynchronous::LocalResponse;
-use rocket::serde::json::Json;
 use test_modules::initiate_api::initiate;
 use test_modules::models::diary_model::Diary;
-use rocket::serde::Deserialize;
 
-use rocket::local::blocking::Client;
-use rocket::http::{Status, ContentType};
+use rocket::local::blocking::{Client, LocalRequest, LocalResponse};
+use rocket::http::{Status};
 use test_modules::models::encrypt::Encryption;
 
 fn initiate_rocket_client() -> Client {
@@ -44,11 +39,13 @@ fn test_post_diary() {
 
     let client = initiate_rocket_client();
 
+    let body = r##"{
+        "title": "post title",
+        "description": "test post description"
+    }"##;
+
     let response = client.post("/api/diary")
-        .body(r##"{
-            "title": "post title",
-            "description": "test post description"
-        }"##)
+        .body(body)
         .dispatch();
 
     assert_eq!(response.status(), Status::Ok);    
