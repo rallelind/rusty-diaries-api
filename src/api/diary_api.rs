@@ -18,9 +18,9 @@ pub fn create_diary(
         date: Some(DateTime::now().to_owned()),
         updated_at: None,
     };
-    let user_detail = db.create_diary(data);
-    match user_detail {
-        Ok(user) => Ok(Json(user)),
+    let diary_detail = db.create_diary(data);
+    match diary_detail {
+        Ok(diary) => Ok(Json(diary)),
         Err(_) => Err(Status::InternalServerError),
     }
 }
